@@ -6,17 +6,22 @@ const SECRETS = require('../config/secrets');
 /**
  * Telegram notification  
  * @param {string} message 
- * @param {string} group  
+ * @param {string} chatId  
  */
-exports.sendMessage = async (message, group) => {
+exports.sendMessage = async (message, chatId) => {
 	try {
 		if (!message) return null;
 
-		message = JSON.stringify(message);
+		// message = JSON.stringify(message);
 
-		const apiKey = SECRETS.TELEGRAM_API_KEY;
+		let apiKey = SECRETS.TELEGRAM_CHATGPT_BOT_API_KEY;
 
-		let data = { 'chat_id': SECRETS.TELEGRAM_CHAT_ID };
+		if (!chatId) {
+			chatId = SECRETS.TELEGRAM_CHAT_ID;
+			apiKey = SECRETS.TELEGRAM_GIDEON_BOT_API_KEY
+		}
+
+		let data = { 'chat_id': chatId };
 
 		while (true) {
 			if (message.length > 3999) {
