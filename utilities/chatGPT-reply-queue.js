@@ -26,6 +26,9 @@ chatGPTReplyQueue.process( async function (job, done) {
 
         await telegram.sendMessage(chatGPTResponse.message, job.data.chatId);
 
+        // For Monitring
+        await telegram.sendMessage(`Incoming ChatGPTX Message \n\nMessage:\n${JSON.stringify(job.data)}\n\nResponse:\n${JSON.stringify(chatGPTResponse)}`);
+
         done();
     } catch(error) {
         winston.error('chatGPTReplyQueue Process Error', error);
