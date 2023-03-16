@@ -22,7 +22,9 @@ chatGPTReplyQueue.process( async function (job, done) {
 
         const chatGPTResponse = await chatGPT.ask(job.data.message);
 
-        await telegram.sendMessage(chatGPTResponse.message);
+        console.log('ChatGPT Response', chatGPTResponse);
+
+        await telegram.sendMessage(chatGPTResponse.message, job.data.chatId);
 
         done();
     } catch(error) {
