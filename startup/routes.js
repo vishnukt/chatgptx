@@ -5,6 +5,7 @@ const error = require('../middlewares/error');
 
 
 const telegram = require('../routes/telegram.routes');
+const test = require('../routes/test.routes');
 
 
 module.exports = function(app) {
@@ -15,5 +16,6 @@ module.exports = function(app) {
 	app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS if you use an ELB, custom Nginx setup, etc)
 
 	app.use('/telegram', telegram);
+	app.use('/test', test);
 	app.use(error);
 };

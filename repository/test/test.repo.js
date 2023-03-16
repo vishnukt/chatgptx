@@ -4,9 +4,9 @@ const { chatGPTReplyQueue } = require('../../utilities/chatGPT-reply-queue');
 
 
 /**
- * Receive Telegram WebHooks
+ * Test out features API
  * */
-exports.telegramWebHookReceiver = asyncMiddleware(async (req, res, next) => {
+exports.testAPI = asyncMiddleware(async (req, res, next) => {
 
     chatGPTReplyQueue.add({
         chatId: req.body.chatId,
