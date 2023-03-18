@@ -9,6 +9,7 @@ const config = require('../config/config');
 function validateTelegramWebhookData(data) {
 	const schema = Joi.object({
         updateId: Joi.number().min(0).required(),
+        messageId: Joi.number().min(0).required(),
         chatId: Joi.number().min(0).required(),
         message: Joi.string().required()
 	});
