@@ -27,7 +27,7 @@ module.exports = async (req, res, next) => {
     
         let data = {
             updateId: req.body.update_id,
-            messageId: req.body.message_id,
+            messageId: req.body.message.message_id,
             chatId: req.body.message.from.id,
             message: req.body.message.text
         }
