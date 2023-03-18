@@ -66,7 +66,7 @@ module.exports = async (req, res, next) => {
 	} catch(ex) {
         winston.error('Telegram WebHook Validator Middleware Error', ex);
 
-		let response = Response('error', 'Invalid WebHook', {}, 401);
+		let response = Response('success', 'Invalid WebHook');
 		return res.status(response.statusCode).send(response);
 	}
 };
