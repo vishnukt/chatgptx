@@ -23,7 +23,7 @@ exports.sendMessage = async (message, chatId, messageId) => {
 
 		let data = { 'chat_id': chatId };
 
-		if (message_id) data['reply_to_message_id'] = messageId;
+		if (messageId) data['reply_to_message_id'] = messageId;
 
 		while (true) {
 			if (message.length > 3999) {
