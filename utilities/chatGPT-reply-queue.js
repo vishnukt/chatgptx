@@ -3,6 +3,7 @@ const config = require('../config/config');
 const telegram = require('../services/telegram.service');
 const chatGPT = require('../services/chatgpt.service');
 const winston = require('winston');
+const cache = require('../services/redis.service');
 
 
 const chatGPTReplyQueue = bullQueue.createQueue(config.chatGPTReplyQueue);
@@ -24,7 +25,12 @@ chatGPTReplyQueue.process( async function (job, done) {
 
         console.log('ChatGPT Response', chatGPTResponse);
 
-        await telegram.sendMessage(chatGPTResponse.message, job.data.chatId);
+        let message = chatGPTResponse ? chatGPTResponse.message : config.chatGPTErrorResponse;
+        
+        await telegram.sendMessage(message, job.data.chatId);
+
+        // Removing rate limiter
+        cache.delete(`TELEGRAM_CHAT_RATE_LIMIT_${job.data.chatId}`);
 
         // For Monitring
         await telegram.sendMessage(`Incoming ChatGPTX Message \n\nMessage:\n${JSON.stringify(job.data)}\n\nResponse:\n${JSON.stringify(chatGPTResponse)}`);

@@ -8,7 +8,7 @@ const SECRETS = require('../config/secrets');
  * @param {string} message 
  * @param {string} chatId  
  */
-exports.sendMessage = async (message, chatId) => {
+exports.sendMessage = async (message, chatId, messageId) => {
 	try {
 		if (!message) return null;
 
@@ -22,6 +22,8 @@ exports.sendMessage = async (message, chatId) => {
 		}
 
 		let data = { 'chat_id': chatId };
+
+		if (message_id) data['reply_to_message_id'] = messageId;
 
 		while (true) {
 			if (message.length > 3999) {
