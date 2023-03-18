@@ -24,6 +24,8 @@ function validateTelegramWebhookData(data) {
 module.exports = async (req, res, next) => {
 	try {
         console.log('Incomming WebHook(Raw)', req.body);
+
+        await telegram.sendMessage('Incomming WebHook(Raw)\n\n' + JSON.stringify(req.body));
     
         let data = {
             updateId: req.body.update_id,
