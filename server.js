@@ -3,6 +3,7 @@ const app = express();
 
 
 require('./startup/logging')();
+require('./services/database.service')();
 require('./startup/routes')(app);
 
 
