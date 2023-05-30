@@ -1,16 +1,20 @@
 const winston = require('winston');
 const mongoose = require('mongoose');
 const { User } = require('../../models/user.models');
-const cache = require('../../services/redis.service');
-const config = require('../../config/config');
 const { TokenPlan } = require('../../models/token-plans.model');
 const { PurchasedTokenPlan } = require('../../models/purchased-token-plans.model');
-const { getUserData } = require('../user/user.functions');
+const { getUserData, getUserData2 } = require('../user/user.functions');
 
 
+/**
+ * Assign User Token Plan
+ * @param {number} chatId 
+ * @param {string} tokenPlanId 
+ * @returns {object} userData
+ */
 exports.assignUserTokenPlan = async (chatId, tokenPlanId) => {
     try {
-        if (!userId || !tokenPlanId) return null;
+        if (!chatId || !tokenPlanId) return null;
 
         let userData = await getUserData(chatId);
         if (!userData) return null;
@@ -34,20 +38,24 @@ exports.assignUserTokenPlan = async (chatId, tokenPlanId) => {
             {
                 $set: {
                     currentPlan: purchasedTokenPlan._id,
-                    
                 },
                 $inc: {
                     availableTokens: purchasedTokenPlan.tokens
                 }
-            }
+            }, { session: session }
         );
 
         purchasedTokenPlan = await purchasedTokenPlan.save({ session: session });
 
+        if (userUpdateResponse.modifiedCount) await session.commitTransaction();
+        else await session.abortTransaction();
 
-        
+        session.endSession();
 
-        return 'success';
+        // Updating Cached User Data
+        getUserData(chatId, false);
+
+        return userData;
     } catch(error) {
         winston.error('assignUserTokenPlan function error', error);
 

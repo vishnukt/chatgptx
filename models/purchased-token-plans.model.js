@@ -48,4 +48,4 @@ purchasedTokenPlanSchema.index({ user: 1 });
 purchasedTokenPlanSchema.index({ chatId: 1 });
 
 
-exports.PurchasedTokenPlan = mongoose.model('purchasedTokenPlan', purchasedTokenPlanSchema);
+exports.PurchasedTokenPlan = mongoose.model('PurchasedTokenPlan', purchasedTokenPlanSchema);

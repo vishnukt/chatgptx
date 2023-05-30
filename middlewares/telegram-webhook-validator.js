@@ -5,6 +5,7 @@ const Joi = require('joi');
 const telegram = require('../services/telegram.service');
 const config = require('../config/config');
 const { createUser, getUserData } = require('../repository/user/user.functions');
+const { assignUserTokenPlan } = require('../repository/tokens/tokens.functions');
 
 
 function validateTelegramChatData(data) {
@@ -85,14 +86,17 @@ async function validateTelegramChat(req) {
         cache.set(`TELEGRAM_CHAT_RATE_LIMIT_${data.chatId}`, 'dummy', 30);
 
         let userData = await getUserData(data.chatId);
-            if (!userData) {
-                userData = await createUser(
-                    data.chatId, data.userData.firstName + data.userData.lastName,
-                    data.userData.userName
-                );
+        if (!userData) {
+            userData = await createUser(
+                data.chatId, data.userData.firstName + data.userData.lastName,
+                data.userData.userName
+            );
 
-                if (!userData) throw new Error('User Creation Failed');
-            }
+            // Assigning User Trial Token Plan
+            await assignUserTokenPlan(data.chatId, config.TRIAL_TOKEN_PLAN_ID);
+
+            if (!userData) throw new Error('User Creation Failed');
+        }
 
         return { data, status: true };
     } catch(ex) {
@@ -148,13 +152,21 @@ module.exports = async (req, res, next) => {
         let status = false;
 
         if (req.body.message.text) {
-            { data, status } = await validateTelegramChat(req);
+            let validatedTelegramChat = await validateTelegramChat(req);
+
+            data = validatedTelegramChat.data;
+            status = validatedTelegramChat.status;
+
             if (!status) {
                 let response = Response('success');
                 return res.status(response.statusCode).send(response);
             }
         } else if (req.body.message.contact) {
-            { data, status } = await validateTelegramContactNumber(req);
+            let validatedTelegramContactNumber = await validateTelegramContactNumber(req);
+
+            data = validatedTelegramContactNumber.data;
+            status = validatedTelegramContactNumber.status;
+
             if (!status) {
                 let response = Response('success');
                 return res.status(response.statusCode).send(response);
@@ -169,8 +181,6 @@ module.exports = async (req, res, next) => {
         req.body = data;
 
         winston.info('INCOMMING WEBHOOK', data);
-
-        
 
 		next();
 	} catch(ex) {

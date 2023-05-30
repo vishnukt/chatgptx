@@ -7,6 +7,7 @@ const config = require('../../config/config');
 /**
  * Return User Details if exists
  * @param {integer} chatId 
+ * @param {boolean} fetchFromCache (optional)
  * @returns userData
  */
 exports.getUserData = async (chatId, getFromCache=true) => {
@@ -25,7 +26,7 @@ exports.getUserData = async (chatId, getFromCache=true) => {
 
         return userData;
     } catch(error) {
-        winston.error('isUserExists function error', error);
+        winston.error('getUserData function error', error);
 
         return null;
     }
@@ -50,8 +51,7 @@ exports.createUser = async (chatId, name, username) => {
         userData = new User({
             chatId: chatId,
             name: name,
-            username: username,
-            availableTokens: config.initialUserTokens
+            username: username
         });
         userData = await userData.save();
 
